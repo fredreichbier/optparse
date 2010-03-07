@@ -5,16 +5,19 @@ import optparse/Parser
 Option: abstract class {
     key: String
 
+    init: func (=key) {}
+
     storeValue: func <T> (parser: Parser, value: T) {
         parser values put(key, value)
     }
-
+    
     storeDefault: abstract func (parser: Parser)
     activate: abstract func (parser: Parser, reader: CommandLineReader) -> Bool
 }
 
 SimpleOption: abstract class extends Option {
-    longName, shortName: String
+    longName := ""
+    shortName := ""
 
     activate: func (parser: Parser, reader: CommandLineReader) -> Bool {
         token := reader peek()
@@ -29,19 +32,17 @@ SimpleOption: abstract class extends Option {
         return false
     }
 
+    longName: func (=longName) {}
+    shortName: func (=shortName) {}
+
     activate2: abstract func (parser: Parser, reader: CommandLineReader)
 }
 
 ToggleOption: class extends SimpleOption {
-    store, defaultValue: Bool
+    store := true
+    defaultValue := false
 
-    init: func ~verbose (=key, =longName, =shortName, =store, =defaultValue) {
-    
-    }
-
-    init: func ~storeTrue (=key, =longName, =shortName, =defaultValue) {
-        store = true
-    }
+    init: func ~doggl (=key) {}
 
     activate2: func (parser: Parser, reader: CommandLineReader) {
         storeValue(parser, store)
@@ -50,15 +51,16 @@ ToggleOption: class extends SimpleOption {
     storeDefault: func (parser: Parser) {
         storeValue(parser, defaultValue)
     }
+
+    store: func (=store) {}
+    defaultValue: func (=defaultValue) {}
 }
 
 StringOption: class extends SimpleOption {
-    defaultValue: String
+    defaultValue := ""
 
-    init: func (=key, =longName, =shortName, =defaultValue) {
-    
-    }
-    
+    init: func ~s (=key) {}
+
     activate2: func (parser: Parser, reader: CommandLineReader) {
         storeValue(parser, reader get())
     }
@@ -66,13 +68,13 @@ StringOption: class extends SimpleOption {
     storeDefault: func (parser: Parser) {
         storeValue(parser, defaultValue)
     }
+
+    defaultValue: func (=defaultValue) {}
 }
 
 ListOption: class extends SimpleOption {
-    init: func (=key, =longName, =shortName) {
-    
-    }
-    
+    init: func ~ichLiebeWurstsalat (=key) {}
+
     activate2: func (parser: Parser, reader: CommandLineReader) {
         parser values get(key, ArrayList<String>) add(reader get())
     }

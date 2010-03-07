@@ -11,9 +11,12 @@ test: func (parser: Parser, args: ArrayList<String>) {
 
 main: func (args: Array<String>) {
     parser := Parser new()
-    parser addOption(ToggleOption new("quiet", "quiet", "q", false))
-    parser addOption(StringOption new("name", "name", "n", "Bla-Bli-Blubb"))
-    parser addOption(ListOption new("libs", "lib", "l"))
+
+    quiet := ToggleOption new("quiet") .longName("quiet") .shortName("q")
+    name := StringOption new("name") .longName("name") .shortName("n")
+    libs := ListOption new("libs") .longName("lib") .shortName("l")
+
+    parser addOption(quiet) .addOption(name) .addOption(libs)
    
     test(parser, args toArrayList())
 }
