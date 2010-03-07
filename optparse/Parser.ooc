@@ -71,6 +71,8 @@ Parser: class {
             option storeDefault(this)
         // yay, parse
         reader := CommandLineReader new(transformArgs(args))
+        // strip first arg (executable).
+        executable := reader get()
         positionalFollow := false
         while(reader isValid() && !positionalFollow) {
             // no option matches. positional arguments.
