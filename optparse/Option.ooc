@@ -1,4 +1,4 @@
-import structs/ArrayList
+import structs/[HashBag, HashMap, ArrayList]
 import text/Buffer
 
 import optparse/Parser
@@ -118,5 +118,27 @@ ListOption: class extends SimpleOption {
 
     storeDefault: func (parser: Parser) {
         storeValue(parser, ArrayList<String> new())
+    }
+}
+
+MapOption: class extends SimpleOption {
+    init: func ~leckerWurstsalat (=key) {}
+
+    activate2: func (parser: Parser, reader: CommandLineReader) {
+        token := reader get()
+        key := ""
+        value := ""
+        if(token contains('=')) {
+            key = token substring(0, token indexOf('='))
+            value = token substring(token indexOf('=') + 1)
+        } else {
+            key = token
+            value = reader get()
+        }
+        parser values get(this key, HashMap<String>) put(key, value)
+    }
+
+    storeDefault: func (parser: Parser) {
+        storeValue(parser, HashMap<String> new())
     }
 }
