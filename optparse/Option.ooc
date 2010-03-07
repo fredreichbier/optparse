@@ -1,3 +1,5 @@
+import structs/ArrayList
+
 import optparse/Parser
 
 Option: abstract class {
@@ -63,5 +65,19 @@ StringOption: class extends SimpleOption {
 
     storeDefault: func (parser: Parser) {
         storeValue(parser, defaultValue)
+    }
+}
+
+ListOption: class extends SimpleOption {
+    init: func (=key, =longName, =shortName) {
+    
+    }
+    
+    activate2: func (parser: Parser, reader: CommandLineReader) {
+        parser values get(key, ArrayList<String>) add(reader get())
+    }
+
+    storeDefault: func (parser: Parser) {
+        storeValue(parser, ArrayList<String> new())
     }
 }
