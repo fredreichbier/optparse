@@ -16,8 +16,10 @@ SimpleOption: abstract class extends Option {
 
     activate: func (parser: Parser, reader: CommandLineReader) -> Bool {
         token := reader peek()
-        if((!longName isEmpty() && token equals("--" + longName)) \
-            || (!shortName isEmpty() && token equals("-" + shortName))) {
+        longNameTemplate := "--" + longName
+        shortNameTemplate := "-" + shortName
+        if((!longName isEmpty() && token equals(longNameTemplate)) \
+            || (!shortName isEmpty() && token equals(shortNameTemplate))) {
             reader skip()
             activate2(parser, reader)
             return true
@@ -41,6 +43,22 @@ ToggleOption: class extends SimpleOption {
 
     activate2: func (parser: Parser, reader: CommandLineReader) {
         storeValue(parser, store)
+    }
+
+    storeDefault: func (parser: Parser) {
+        storeValue(parser, defaultValue)
+    }
+}
+
+StringOption: class extends SimpleOption {
+    defaultValue: String
+
+    init: func (=key, =longName, =shortName, =defaultValue) {
+    
+    }
+    
+    activate2: func (parser: Parser, reader: CommandLineReader) {
+        storeValue(parser, reader get())
     }
 
     storeDefault: func (parser: Parser) {

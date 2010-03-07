@@ -1,11 +1,25 @@
 import structs/[ArrayList, HashBag]
-
+import text/StringTokenizer
 import optparse/Option
 
 ParserError: class extends Exception {
     init: func ~withMsg (.msg) {
         super(msg)
     }
+}
+
+/* transform ["--a=hello world"] to ["--a", "hello world"] */
+transformArgs: func (args: ArrayList<String>) -> ArrayList<String> {
+    result := ArrayList<String> new()
+    for(arg in args) {
+        if(arg contains('=')) {
+            // split!
+            result addAll(arg split('=', 1))
+        } else {
+            result add(arg)
+        }
+    }
+    result
 }
 
 CommandLineReader: class {
@@ -56,15 +70,18 @@ Parser: class {
         for(option in options)
             option storeDefault(this)
         // yay, parse
-        reader := CommandLineReader new(args)
+        reader := CommandLineReader new(transformArgs(args))
         positionalFollow := false
         while(reader isValid() && !positionalFollow) {
-            for(option in options) {
-                if(option activate(this, reader))
-                    break
-            }
             // no option matches. positional arguments.
             positionalFollow = true
+            for(option in options) {
+                if(option activate(this, reader)) {
+                    // option matched. no positional arguments yet.
+                    positionalFollow = false
+                    break
+                }
+            }
         }
         while(positionalFollow && reader isValid()) {
             positional add(reader get())
