@@ -1,5 +1,6 @@
 import structs/[ArrayList, HashBag]
-import text/StringTokenizer
+import text/[Buffer, StringTokenizer]
+
 import optparse/Option
 
 ParserError: class extends Exception {
@@ -60,6 +61,18 @@ Parser: class {
 
     addOption: func (option: Option) {
         options add(option)
+    }
+
+    createHelp: func -> String {
+        buf := Buffer new()
+        for(option in options) {
+            buf append(option createHelp())
+        }
+        buf toString()
+    }
+
+    displayHelp: func {
+        createHelp() println()
     }
 
     parse: func (args: ArrayList<String>) {

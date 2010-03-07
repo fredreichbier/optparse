@@ -1,11 +1,17 @@
 import structs/ArrayList
+import text/Buffer
 
 import optparse/Parser
 
 Option: abstract class {
     key: String
+    help := ""
+    metaVar := ""
 
     init: func (=key) {}
+
+    help: func (=help) {}
+    metaVar: func (=metaVar) {}
 
     storeValue: func <T> (parser: Parser, value: T) {
         parser values put(key, value)
@@ -13,6 +19,7 @@ Option: abstract class {
     
     storeDefault: abstract func (parser: Parser)
     activate: abstract func (parser: Parser, reader: CommandLineReader) -> Bool
+    createHelp: abstract func -> String
 }
 
 SimpleOption: abstract class extends Option {
@@ -30,6 +37,36 @@ SimpleOption: abstract class extends Option {
             return true
         }
         return false
+    }
+
+    createHelp: func -> String {
+        buf := Buffer new()
+        buf append(" ")
+        // has short name.
+        if(!shortName isEmpty()) {
+            buf append("-%s" format(shortName))
+            if(!longName isEmpty()) {
+                buf append(", ")
+            }
+        }
+        // has long name.
+        if(!longName isEmpty()) {
+            buf append("--%s" format(longName))
+        }
+        // metavar!
+        if(!metaVar isEmpty()) {
+            buf append(' ') .append(metaVar)
+        } else {
+            buf append("\t")
+        }
+        // tab!
+        buf append("\t\t")
+        // description!
+        if(!help isEmpty()) {
+            buf append(help)
+        }
+        buf append('\n')
+        buf toString()
     }
 
     longName: func (=longName) {}
