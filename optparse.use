@@ -1,0 +1,4 @@
+Name: optparse
+Description: Simple command line option parsing for ooc 
+SourcePath: .
+
