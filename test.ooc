@@ -1,4 +1,4 @@
-import structs/[HashBag, Array, ArrayList, HashMap]
+import structs/[HashBag, ArrayList, HashMap]
 import optparse/[Option, Parser]
 
 test: func (parser: Parser, args: ArrayList<String>) {
@@ -14,7 +14,7 @@ test: func (parser: Parser, args: ArrayList<String>) {
     "Positional: %s" format(parser positional join(' ')) println()
 }
 
-main: func (args: Array<String>) {
+main: func (args: ArrayList<String>) {
     parser := Parser new()
     
     quiet := ToggleOption new("quiet") .longName("quiet") .shortName("q") .help("Don't say anything.")
