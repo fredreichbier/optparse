@@ -4,8 +4,15 @@ import text/[Buffer, StringTokenizer]
 import optparse/Option
 
 ParserError: class extends Exception {
-    init: func ~withMsg (.msg) {
+    parser: Parser
+
+    init: func ~withMsg (=parser, .msg) {
         super(msg)
+    }
+
+    print: func {
+        fprintf(stderr, "%s", getMessage())
+        parser displayHelp()
     }
 }
 
@@ -26,8 +33,9 @@ transformArgs: func (args: ArrayList<String>) -> ArrayList<String> {
 CommandLineReader: class {
     args: ArrayList<String>
     index: SizeT
+    parser: Parser
 
-    init: func (=args) {
+    init: func (=parser, =args) {
         index = 0
     }
     
@@ -36,7 +44,11 @@ CommandLineReader: class {
     }
     
     peek: func -> String {
-        args[index]
+        if(index >= args size()) {
+            parser error("I smell incompleteness.")    
+        } else {
+            return args[index]
+        }
     }
 
     skip: func {
@@ -45,7 +57,11 @@ CommandLineReader: class {
 
     get: func -> String {
         index += 1
-        args[index - 1]
+        if(index > args size()) {
+            parser error("I smell incompleteness.")    
+        } else {
+            return args[index - 1]
+        }
     }
 }
 
@@ -75,6 +91,10 @@ Parser: class {
         createHelp() println()
     }
 
+    error: func (msg: String) {
+        ParserError new(this, msg) throw()
+    }
+
     parse: func (args: ArrayList<String>) {
         // new positional args
         positional = ArrayList<String> new()
@@ -83,7 +103,7 @@ Parser: class {
         for(option in options)
             option storeDefault(this)
         // yay, parse
-        reader := CommandLineReader new(transformArgs(args))
+        reader := CommandLineReader new(this, transformArgs(args))
         // strip first arg (executable).
         executable := reader get()
         positionalFollow := false
