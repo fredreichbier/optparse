@@ -135,10 +135,10 @@ MapOption: class extends SimpleOption {
             key = token
             value = reader get()
         }
-        parser values get(this key, HashMap<String>) put(key, value)
+        parser values get(this key, HashMap<String, String>) put(key, value)
     }
 
     storeDefault: func (parser: Parser) {
-        storeValue(parser, HashMap<String> new())
+        storeValue(parser, HashMap<String, String> new())
     }
 }
