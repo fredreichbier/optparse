@@ -1,17 +1,17 @@
 import structs/[ArrayList, HashBag]
-import text/[Buffer, StringTokenizer]
+import text/[StringTokenizer]
 
 import optparse/Option
 
 ParserError: class extends Exception {
     parser: Parser
 
-    init: func ~withMsg (=parser, .msg) {
-        super(msg)
+    init: func ~withMsg (=parser, .message) {
+        super(message)
     }
 
     print: func {
-        fprintf(stderr, "%s", getMessage())
+        "%s" printfln(message)
         parser displayHelp()
     }
 }
@@ -20,7 +20,7 @@ ParserError: class extends Exception {
 transformArgs: func (args: ArrayList<String>) -> ArrayList<String> {
     result := ArrayList<String> new()
     for(arg in args) {
-        if(arg contains('=')) {
+        if(arg contains?('=')) {
             // split!
             result addAll(arg split('=', 1))
         } else {
@@ -40,11 +40,11 @@ CommandLineReader: class {
     }
     
     isValid: func -> Bool {
-        index < args size()
+        index < args size
     }
     
     peek: func -> String {
-        if(index >= args size()) {
+        if(index >= args size) {
             parser error("I smell incompleteness.")    
         } else {
             return args[index]
@@ -57,7 +57,7 @@ CommandLineReader: class {
 
     get: func -> String {
         index += 1
-        if(index > args size()) {
+        if(index > args size) {
             parser error("I smell incompleteness.")    
         } else {
             return args[index - 1]

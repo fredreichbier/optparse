@@ -7,8 +7,8 @@ test: func (parser: Parser, args: ArrayList<String>) {
     "Quiet: %d " format(parser values get("quiet", Bool)) println()
     "Libs: %s" format(parser values get("libs", ArrayList<String>) join(", ")) println()
     "Config:" println()
-    cfg := parser values get("cfg", HashMap<String>)
-    for(key in cfg keys) {
+    cfg := parser values get("cfg", HashMap<String, String>)
+    for(key in cfg getKeys()) {
         "        '%s' => '%s'" format(key, cfg[key]) println()
     }
     "Positional: %s" format(parser positional join(' ')) println()
@@ -24,9 +24,9 @@ main: func (args: ArrayList<String>) {
 
     parser addOption(quiet) .addOption(name) .addOption(libs) .addOption(cfg)
     
-    if(args size() < 2) {
+    if(args size < 2) {
         parser displayHelp()
     } else {
-        test(parser, args toArrayList())
+        test(parser, args)
     }
 }

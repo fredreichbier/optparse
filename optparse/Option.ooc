@@ -1,5 +1,4 @@
 import structs/[HashBag, HashMap, ArrayList]
-import text/Buffer
 
 import optparse/Parser
 
@@ -26,12 +25,14 @@ SimpleOption: abstract class extends Option {
     longName := ""
     shortName := ""
 
+    init: func ~noarg {} // heaven knows
+
     activate: func (parser: Parser, reader: CommandLineReader) -> Bool {
         token := reader peek()
         longNameTemplate := "--" + longName
         shortNameTemplate := "-" + shortName
-        if((!longName isEmpty() && token equals(longNameTemplate)) \
-            || (!shortName isEmpty() && token equals(shortNameTemplate))) {
+        if((!longName empty?() && token == longNameTemplate) \
+            || (!shortName empty?() && token == shortNameTemplate)) {
             reader skip()
             activate2(parser, reader)
             return true
@@ -43,18 +44,18 @@ SimpleOption: abstract class extends Option {
         buf := Buffer new()
         buf append(" ")
         // has short name.
-        if(!shortName isEmpty()) {
+        if(!shortName empty?()) {
             buf append("-%s" format(shortName))
-            if(!longName isEmpty()) {
+            if(!longName empty?()) {
                 buf append(", ")
             }
         }
         // has long name.
-        if(!longName isEmpty()) {
+        if(!longName empty?()) {
             buf append("--%s" format(longName))
         }
         // metavar!
-        if(!metaVar isEmpty()) {
+        if(!metaVar empty?()) {
             buf append(' ') .append(metaVar)
         } else {
             buf append("\t")
@@ -62,7 +63,7 @@ SimpleOption: abstract class extends Option {
         // tab!
         buf append("\t\t")
         // description!
-        if(!help isEmpty()) {
+        if(!help empty?()) {
             buf append(help)
         }
         buf append('\n')
@@ -128,7 +129,7 @@ MapOption: class extends SimpleOption {
         token := reader get()
         key := ""
         value := ""
-        if(token contains('=')) {
+        if(token contains?('=')) {
             key = token substring(0, token indexOf('='))
             value = token substring(token indexOf('=') + 1)
         } else {
